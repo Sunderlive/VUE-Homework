@@ -7,7 +7,8 @@
 <script>
 import ProductItem from './ProductItem.vue';
   export default {
-    components: {ProductItem},
+    components:
+    {ProductItem: ProductItem},
     props: ['products']
 };
 </script>
