@@ -1,20 +1,22 @@
 <template>
-<li class="catalog__item" v-bind:key="product.id">
-            <a class="catalog__pic" href="#">
-              <img v-bind:src="product.image" v-bind:alt="product.title">
-            </a>
 
-            <h3 class="catalog__title">
-              <a href="#">
-                {{ product.title }}
-              </a>
-            </h3>
+<li class="catalog__item">
+      <a class="catalog__pic" href="#" @click.prevent="gotoPage( 'product',{id: product.id})">
+        <img v-bind:src="product.image" :alt="product.title">
+        <!-- Атрибут src связываю чере v-bind  -->
+      </a>
 
-            <span class="catalog__price">
-              {{ product.price }} ₽
-            </span>
+      <h3 class="catalog__title">
+        <a href="#">
+          {{ product.title }}
+        </a>
+      </h3>
 
-            <ul class="colors colors--black">
+      <span class="catalog__price">
+        {{ numberFormat(product.price)}}₽
+      </span>
+
+      <ul class="colors colors--black">
               <li class="colors__item" v-for="colorProduct in product.colorHex" :key="colorProduct" :colorProduct="colorProduct">
                 <label class="colors__label">
                   <input class="colors__radio sr-only" type="radio" :value="colorProduct" v-model="color">
@@ -23,17 +25,26 @@
                 </label>
               </li>
             </ul>
-</li>
-
+    </li>
 </template>
 
 <script>
-  export default {
-    data() {
+
+import gotoPage from '@/helpers/gotoPages';
+import numberFormat from '@/helpers/numberFormat';
+
+export default {
+  data() {
       return {
 			color: this.product.colorHex
 		};
-    },
-    props: ['product']
-  }
+  },
+  methods: {
+    gotoPage,
+    numberFormat,
+  },
+  props: ['product']
+}
+
 </script>
+

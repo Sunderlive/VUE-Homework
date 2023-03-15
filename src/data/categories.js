@@ -24,7 +24,3 @@ export default [
     title: 'Ноутбуки',
   },
 ]
-
-
-
-
