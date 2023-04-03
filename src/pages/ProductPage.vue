@@ -3,14 +3,17 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
+          <router-link class="breadcrumbs__link" :to="{name:'main'}">
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#" @click.prevent="gotoPage('main')">
+          <router-link class="breadcrumbs__link" :to="{name:'main'}">
             {{category.title}}
-          </a>
+          </router-link>
+          <!-- <a class="breadcrumbs__link" @click.prevent="$router.push({name:'main'})"> Как вариант
+            {{category.title}}
+          </a> -->
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -33,7 +36,7 @@
           {{product.title}}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <b class="item__price">
              {{ numberFormat(product.price) }}₽
             </b>
@@ -96,22 +99,22 @@
             </fieldset>
 
             <div class="item__row">
-              <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
+              <!-- <div class="form__counter">
+                <button type="button" aria-label="Убрать один товар" @click.prevent="decreaseProduct">
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-minus"></use>
                   </svg>
                 </button>
 
-                <input type="text" value="1" name="count">
+                <input type="text" v-model.number="productAmount">
 
-                <button type="button" aria-label="Добавить один товар">
+                <button type="button" aria-label="Добавить один товар" @click.prevent="increaseProduct">
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus"></use>
                   </svg>
                 </button>
-              </div>
-
+              </div> -->
+              <ProductCounter :amount.sync='productAmount'/>
               <button class="button button--primery" type="submit">
                 В корзину
               </button>
@@ -188,17 +191,23 @@ import products from '@/data/products';
 import categories from '@/data/categories';
 import gotoPage from '@/helpers/gotoPages';
 import numberFormat from '@/helpers/numberFormat';
+import ProductCounter from '@/components/ProductCounter';
 
 
 export default {
-  props:['pageParams'],
+  data(){
+    return {
+      productAmount: 1
+    }
+  },
   filter: {
     numberFormat
   },
+  components: {ProductCounter} ,
   // вычисляемое свойство computed
   computed: {
     product(){
-      return products.find(product=> product.id === this.pageParams.id)
+      return products.find(product=> product.id === +this.$route.params.id) // + строку привел к числу или Number(this.$route.params.id)
     },
     category(){
       return categories.find(category => category.id === this.product.categoryId)
@@ -207,6 +216,12 @@ export default {
   methods: {
     gotoPage,
     numberFormat,
+    addToCart(){
+      this.$store.commit(
+        'addProductToCart',
+        {productId: this.product.id, amount: this.productAmount}
+      )
+    },
   }
 }
 </script>
