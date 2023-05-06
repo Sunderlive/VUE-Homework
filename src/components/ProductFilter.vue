@@ -28,10 +28,11 @@
           <fieldset class="form__block">
             <legend class="form__legend">Цвет</legend>
             <ul class="colors">
-              <li class="colors__item"  v-for="color in colors" :key="color.colorId" >
+              <li class="colors__item"  v-for="color in colors" :key="color.id" >
                 <label class="colors__label" >
-                  <input class="colors__radio sr-only" type="radio" name="color" :value="color.colorId" checked="" v-model="currentColorsId">
-                  <span class="colors__value" :style="color.colorValue">
+                  <input class="colors__radio sr-only" type="radio" name="color" :value="color.id" checked="" v-model="currentColorId">
+                  <span class="colors__value" :style="`background-color: ${color.code}`">
+                    <!-- :style="color.code" -->
                   </span>
                 </label>
               </li>
@@ -109,8 +110,9 @@
 </template>
 
 <script>
-import categories from "../data/categories"
-  import colors from "../data/colors"
+//коммент
+import axios from 'axios'
+import { API_BASE_URL } from '@/config';
 
     export default {
       data() {
@@ -118,18 +120,21 @@ import categories from "../data/categories"
           currentPriceFrom: 0,
           currentPriceTo: 0,
           currentCategoryId:0,
-          currentColorsId:0,
+          currentColorId:0,
+
+          colorsData: null,
+          categoriesData: null,
         }
       },
-      props: ['priceFrom', 'priceTo', 'categoryId', 'colorsId'],
+      props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
       computed: {
+        categories(){
+          return this.categoriesData ? this.categoriesData.items : [];
+        },
         colors() {
-          return colors;
+          return this.colorsData ? this.colorsData.items : [];
         },
 
-        categories(){
-          return categories;
-        }
       },
 
       watch: {
@@ -142,8 +147,8 @@ import categories from "../data/categories"
         categoryId(value){
           this.currentCategoryId = value;
         },
-        colorsId(value) {
-          this.currentColorsId = value;
+        colorId(value) {
+          this.currentColorId = value;
         }
       },
 
@@ -152,15 +157,28 @@ import categories from "../data/categories"
           this.$emit('update:priceFrom', this.currentPriceFrom);
           this.$emit('update:priceTo', this.currentPriceTo);
           this.$emit('update:categoryId', this.currentCategoryId);
-          this.$emit('update:colorsId', this.currentColorsId);
+          this.$emit('update:colorId', this.currentColorId);
         },
         reset(){
           this.$emit('update:priceFrom', 0);
           this.$emit('update:priceTo', 0);
           this.$emit('update:categoryId', 0);
-          this.$emit('update:colorsId', 0);
+          this.$emit('update:colorId', 0);
+        },
+        loadCategories() {
+          axios.get(API_BASE_URL+`/api/productCategories`)
+          .then(response => this.categoriesData = response.data)
+        },
+        loadColors() {
+          axios.get(API_BASE_URL+`/api/colors`)
+          .then(response => this.colorsData = response.data )
         }
-      }
+      },
+      created(){
+        this.loadCategories();
+        this.loadColors()
+      },
+
     }
 
 </script>

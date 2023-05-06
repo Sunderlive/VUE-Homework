@@ -1,4 +1,3 @@
-
 <template>
 <!-- eslint-disable max-len -->
 <div class="product__counter form__counter">

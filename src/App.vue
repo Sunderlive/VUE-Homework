@@ -15,7 +15,7 @@
     </div>
   </header>
   <router-view></router-view>
-  
+
   <footer class="footer">
     <div class="footer__wrapper container">
       <ul class="footer__links">
@@ -114,9 +114,21 @@
 <script>
 
 import CartIndicator from '@/components/CartIndicator.vue';
+import { mapActions, mapMutations } from 'vuex'; //функция для проксирования мутации
 
 export default {
-  components:{CartIndicator}
+  components:{CartIndicator},
+  created(){
+    const userAccessKey = localStorage.getItem('userAccessKey')
+    if(userAccessKey){
+      this.updateUserAccessKey(userAccessKey)
+    }
+    this.loadCart()
+  },
+  methods: {
+    ...mapActions(['loadCart']),
+    ...mapMutations(['updateUserAccessKey'])
+  }
 }
 
 </script>

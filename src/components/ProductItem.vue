@@ -17,10 +17,10 @@
       </span>
 
       <ul class="colors colors--black">
-              <li class="colors__item" v-for="colorProduct in product.colorHex" :key="colorProduct" :colorProduct="colorProduct">
+              <li class="colors__item" v-for="colorProduct in product.colors" :key="colorProduct.id" :colorProduct="colorProduct">
                 <label class="colors__label">
                   <input class="colors__radio sr-only" type="radio" :value="colorProduct" v-model="color">
-                  <span class="colors__value" :style="{'background-color': colorProduct}">
+                  <span class="colors__value" :style="{'background-color': colorProduct.code}">
                   </span>
                 </label>
               </li>
