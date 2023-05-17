@@ -9,12 +9,20 @@ export default new Vuex.Store({
   state:{
     cartProducts:[],
     userAccessKey: null,
-
-    cartProductsData: []
+    cartProductsData: [],
+    orderInfo: null,
+    cartLoading: null
   },
   // работая с хранилищем Vuex запрещается напрямую изменять любые свойства состояния, поэтому мутации
   // изменять состояние можно только в обработчиках мутации
   mutations: {
+    updateOrderInfo(state, orderInfo){
+      state.orderInfo = orderInfo
+    },
+    resetCart(state) {
+      state.cartProducts = [],
+      state.cartProductsData = []
+    },
     updateCartProductAmount(state,{productId, amount}){
       const item = state.cartProducts.find(item => item.productId === productId)
       if(item){
@@ -60,13 +68,24 @@ export default new Vuex.Store({
     // },
   },
   actions: {
-     loadCart(context){
+    loadOrderInfo(context, orderId){
+      return axios
+      .get(API_BASE_URL+`/api/orders/`+ orderId, {
+        params:{
+          userAccessKey: context.state.userAccessKey
+        }
+      })
+      .then(response => {
+        context.commit('updateOrderInfo', response.data)
+      })
+    },
+    loadCart(context){
+      this.state.cartLoading = true;
       return axios
       .get(API_BASE_URL+`/api/baskets`, {
         params:{
           userAccessKey: context.state.userAccessKey
         }
-
       })
       .then(response => {
         if(!context.state.userAccessKey) {
@@ -75,6 +94,9 @@ export default new Vuex.Store({
         }
         context.commit('updateCartProductsData', response.data.items)
         context.commit('syncCartProducts', response.data.items)
+      })
+      .then(() => {
+        this.state.cartLoading = false;
       })
 
     },
@@ -93,6 +115,7 @@ export default new Vuex.Store({
             .then(response => {
               context.commit('updateCartProductsData', response.data.items)
               context.commit('syncCartProducts')
+
             })})
       },
       updateCartProductAmount(context, {productId , amount}){

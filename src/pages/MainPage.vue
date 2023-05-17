@@ -35,7 +35,7 @@ import axios from 'axios'
 import { API_BASE_URL } from '@/config';
 
 export default {
-  name: 'main',
+  name: 'mainPage',
   components: {ProductList:ProductList, BasePagination, ProductFilter},// указываем, что собираемся юзать компонет из ProductList.vue (Можно сократить до просто ProductList)
   data(){               // состояние. Мы задали products: products(это data.products.js)
     return {
